@@ -1,0 +1,17 @@
+settings:
+
+difficulty
+word_length
+custom_theme
+
+notes:
+
+notes_save
+notes
+
+main_wn:
+
+user_answer
+test_user_answer
+toolbar_quit
+Help
