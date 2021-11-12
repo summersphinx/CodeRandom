@@ -1,21 +1,14 @@
-import random as r, math, os, time, urllib, webbrowser, PySimpleGUI as sg
-from mods import load_words
+import os
+import pandas as pd
 
-dirPath = os.getcwd() + '\\game'
+level = 'a little complicated'
 
-pp = []
+dirPath = os.getcwd() + '/game'
 
-master_word = r.choice(load_words.load_words(5))
-
-for each in master_word:
-    s = dirPath+"\\img\\pig_"+each+".png"
-    pp.append(sg.Image(s))
-
-layout = [pp]
-    
-window = sg.Window('Test', layout)
-
-event, values = window.read()
-
-window.close()
-print(master_word)
+wb = pd.read_excel(dirPath + '/levels/levels.xlsx', index_col='Level')
+print(wb.keys())
+print(type(wb))
+print(wb)
+var = wb.loc[level].values.tolist()
+print(var)
+print(type(var))

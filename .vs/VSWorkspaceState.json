@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\game",
+    "\\mods"
   ],
-  "SelectedNode": "\\CodeRandom.py",
+  "SelectedNode": "\\timer_Test.py",
   "PreviewInSolutionExplorer": false
 }
