@@ -1,9 +1,10 @@
 import random as r
 import os
+import string
 # import time
 import webbrowser
 import PySimpleGUI as sg
-import pandas as pd
+from pandas import read_csv
 
 from mods import load_words
 from mods import ciphers
@@ -58,13 +59,13 @@ SETTINGS = read_file('settings.txt', dir_path)
 
 
 def get_levels():
-    wb = pd.read_csv(
+    wb = read_csv(
         'https://docs.google.com/spreadsheets/d/12u8YjG8_XJnMxyZq6gjYZss5Ez2UU_KaMZe64cT5-7U/export?format=csv&gid=1923121378')
     return wb['Level'].values.tolist()
 
 
 def get_level_plan(level):
-    wb = pd.read_csv(
+    wb = read_csv(
         'https://docs.google.com/spreadsheets/d/12u8YjG8_XJnMxyZq6gjYZss5Ez2UU_KaMZe64cT5-7U/export?format=csv&gid=1923121378',
         index_col='Level')
     return wb.loc[level].values.tolist()
@@ -140,8 +141,38 @@ print(master_puzzle)
 
 master_puzzle_encrypted = ciphers.encrypt(char, master_puzzle)
 
-hint_p_p = [sg.Text(r.choice(load_words.load_words(5)))]
+hint_puzzle_words = [r.choice(load_words.load_words(4)), r.choice(load_words.load_words(4)),
+                     r.choice(load_words.load_words(4))]
 
+hint_order = []
+
+
+print(puzzle_steps)
+for step in puzzle_steps:
+    hint_letters = [r.choice(
+        ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+         'w', 'x', 'y', 'z']), r.choice(
+        ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+         'w', 'x', 'y', 'z']), r.choice(
+        ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+         'w', 'x', 'y', 'z'])]
+    original_letters = hint_letters.copy()
+    if type(step) is list:
+        print(True)
+        if step[0] == 'shift':
+            letters = ciphers.string_from_list(hint_letters)
+            letters = ciphers.shift(step[1], letters)
+            hint_order.append([original_letters, list(letters)])
+    if step == 'flip':
+        print('flip')
+        letters = ciphers.string_from_list(hint_letters)
+        letters = ciphers.encrypt(ciphers.flip(string.ascii_lowercase), hint_letters)
+        hint_order.append([original_letters, list(letters)])
+
+current_hint = 0
+
+hint_p_p = [sg.Text(hint_order[current_hint][0][0] + ' -> ' + hint_order[current_hint][1][0] + '\n' + hint_order[current_hint][0][1] + ' -> ' + hint_order[current_hint][1][1] + '\n' + hint_order[current_hint][0][2] + ' -> ' + hint_order[current_hint][1][2], k='hint_card')]
+# hint_order[current_hint][0][0] + ' -> ' + hint_order[current_hint][1][0] + '\n' + hint_order[current_hint][0][1] + ' -> ' + hint_order[current_hint][1][1] + '\n' + hint_order[current_hint][0][2] + ' -> ' + hint_order[current_hint][1][2]
 # Notes
 
 n = open(dir_path + '\\notes.txt', 'r')  # Read Stored Notes
@@ -157,9 +188,9 @@ n.close()
 
 
 hint_p_layout = [
-    [sg.Radio('A', 'hint_p', default=True, k='hint_a', disabled=True),
-     sg.Radio('B', 'hint_p', k='hint_b', disabled=True),
-     sg.Radio('C', 'hint_p', k='hint_c', disabled=True), sg.Button('Update', k='update_hint_p', disabled=True)],
+    [sg.Radio('A', 'hint_p', default=True, k=0),
+     sg.Radio('B', 'hint_p', k=1),
+     sg.Radio('C', 'hint_p', k=2), sg.Button('Update', k='update_hint_p')],
     [sg.Input('', k='user_hint'), sg.Button('Test', k='test_hint')],
     hint_p_p
 ]
@@ -181,12 +212,13 @@ puzzle_layout = [[sg.Frame('', hint_m_layout, expand_x=True, expand_y=True)],
                  [sg.Frame('', hint_p_layout, expand_x=True, expand_y=True)]]
 
 layout = [
-    [sg.Menu([['&CodeRandom', ['&Form', '&Help', '&Quit']]], font='Verdana', size=(24, 24), pad=(10, 10))],
+    [sg.Menu([['&CodeRandom', ['&Form', '&Help', '&Report Bugs', '&Quit']]], font='Verdana', size=(24, 24), pad=(10, 10))],
     [sg.Column(notes_layout, expand_x=True, expand_y=True), sg.Column(puzzle_layout, expand_x=True, expand_y=True)]
 ]
 
+
 if launch_main_wn:
-    wn = Window = sg.Window('CodeRandom', layout, finalize=True, no_titlebar=True, font='Verdana 16 bold')
+    wn = sg.Window('CodeRandom', layout, finalize=True, no_titlebar=True, font='Verdana 16 bold')
     wn.maximize()
 
     while True:
@@ -200,8 +232,20 @@ if launch_main_wn:
             webbrowser.open_new_tab(dir_path + "\\game\\html\\Help.html")
         if event == 'Form':
             webbrowser.open_new_tab('https://forms.gle/sMgiRuVWcKewB8wa7')
+        if event == 'Report Bugs':
+            webbrowser.open_new_tab('https://github.com/summersphinx/CodeRandom/issues/new')
         if event == 'update_hint_p':
-            pass
+            if values['0']:
+                current_hint = 0
+            if values['1']:
+                current_hint = 1
+            if values['2']:
+                current_hint = 2
+            # noinspection PyBroadException
+            try:
+                wn['hint_card'].update(hint_order[current_hint][0][0] + ' -> ' + hint_order[current_hint][1][0] + '\n' + hint_order[current_hint][0][1] + ' -> ' + hint_order[current_hint][1][1] + '\n' + hint_order[current_hint][0][2] + ' -> ' + hint_order[current_hint][1][2])
+            except:
+                wn['hint_card'].update('N/A')
         if event == 'test_master':
             if values['input_master'] == master_puzzle:
                 sg.PopupOK('You are Correct!')

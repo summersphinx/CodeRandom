@@ -12,6 +12,14 @@ def flip(string):
     return string
 
 
+def string_from_list(l):
+    word = ''
+
+    for char in l:
+        word += char
+    return word
+
+
 def encrypt(string, word):
     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
             'v', 'w', 'x', 'y', 'z']
