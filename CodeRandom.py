@@ -58,12 +58,15 @@ SETTINGS = read_file('settings.txt', dir_path)
 
 
 def get_levels():
-    wb = pd.read_csv('https://docs.google.com/spreadsheets/d/12u8YjG8_XJnMxyZq6gjYZss5Ez2UU_KaMZe64cT5-7U/export?format=csv&gid=1923121378')
+    wb = pd.read_csv(
+        'https://docs.google.com/spreadsheets/d/12u8YjG8_XJnMxyZq6gjYZss5Ez2UU_KaMZe64cT5-7U/export?format=csv&gid=1923121378')
     return wb['Level'].values.tolist()
 
 
 def get_level_plan(level):
-    wb = pd.read_csv('https://docs.google.com/spreadsheets/d/12u8YjG8_XJnMxyZq6gjYZss5Ez2UU_KaMZe64cT5-7U/export?format=csv&gid=1923121378', index_col='Level')
+    wb = pd.read_csv(
+        'https://docs.google.com/spreadsheets/d/12u8YjG8_XJnMxyZq6gjYZss5Ez2UU_KaMZe64cT5-7U/export?format=csv&gid=1923121378',
+        index_col='Level')
     return wb.loc[level].values.tolist()
 
 
@@ -80,7 +83,7 @@ def make_settings_wn(path):
     # Right side of the settings window
     # noinspection PyTypeChecker
     layout_right = [
-        [sg.Spin(get_levels(), k='difficulty', s=(20, 1), disabled=True)],
+        [sg.Spin(get_levels(), k='difficulty', s=(20, 1))],
         [sg.InputCombo(sg.theme_list(), k='custom_theme', default_value=SETTINGS['last_theme'])]
     ]
 
@@ -118,25 +121,19 @@ puzzle_steps = get_level_plan(values['difficulty'])
 
 master_puzzle = r.choice(load_words.load_words(r.randint(4, 7)))
 
-
-
-
 iteration = 0
 for each in puzzle_steps:
-    if each == 't':
-        puzzle_steps.pop(0)
-        puzzle_steps = r.shuffle(puzzle_steps)
-    elif each == 'shift':
-        iteration +=1
+    if each == 'shift':
+        iteration += 1
         key_shift = r.randint(1, 25)
         char = ciphers.shift(key_shift, char)
         puzzle_steps.insert(iteration, [each, key_shift])
-        puzzle_steps.pop(iteration-1)
+        puzzle_steps.pop(iteration - 1)
+    elif each == 'flip':
+        char = ciphers.flip(char)
     elif each == 'none':
         iteration += 1
         continue
-    elif each == 'f':
-        iteration +=1
 
 print(char)
 print(master_puzzle)
@@ -160,7 +157,8 @@ n.close()
 
 
 hint_p_layout = [
-    [sg.Radio('A', 'hint_p', default=True, k='hint_a', disabled=True), sg.Radio('B', 'hint_p', k='hint_b', disabled=True),
+    [sg.Radio('A', 'hint_p', default=True, k='hint_a', disabled=True),
+     sg.Radio('B', 'hint_p', k='hint_b', disabled=True),
      sg.Radio('C', 'hint_p', k='hint_c', disabled=True), sg.Button('Update', k='update_hint_p', disabled=True)],
     [sg.Input('', k='user_hint'), sg.Button('Test', k='test_hint')],
     hint_p_p
@@ -170,6 +168,7 @@ hint_p_layout = [
 # noinspection PyTypeChecker
 hint_m_layout = [
     [sg.Text('Master Puzzle: ' + master_puzzle_encrypted)],
+    [sg.Text(puzzle_steps)],
     [sg.Image(dir_path + '/img/heart.png', background_color=None),
      sg.Image(dir_path + '/img/heart.png', background_color=None),
      sg.Image(dir_path + '/img/heart.png', background_color=None)],
