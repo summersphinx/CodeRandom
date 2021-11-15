@@ -7,12 +7,18 @@
     <list default="true" id="f0172294-447e-4a65-9791-049bf65c14b8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CodeRandom.py" beforeDir="false" afterPath="$PROJECT_DIR$/CodeRandom.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mods/ciphers.py" beforeDir="false" afterPath="$PROJECT_DIR$/mods/ciphers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/html/Help.html" beforeDir="false" afterPath="$PROJECT_DIR$/game/html/Help.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/html/Help.html.bak" beforeDir="false" afterPath="$PROJECT_DIR$/game/html/Help.html.bak" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExportToHTMLSettings">
+    <option name="printScope" value="4" />
+    <option name="OPEN_IN_BROWSER" value="true" />
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/exportToHTML" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -30,6 +36,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/mods/ciphers.py" />
@@ -125,5 +132,8 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>

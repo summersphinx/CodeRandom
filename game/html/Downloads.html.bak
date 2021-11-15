@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Downloads: CodeRandom</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Goldman&amp;display=swap"
+
+      rel="stylesheet">
+  </head>
+  <body>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+        body {
+          margin: 0;
+          font-family: 'Goldman', cursive;
+          background-color: #000;
+        }
+        /* Style the side navigation */
+        .sidenav {
+          height: 100%;
+          width: 200px;
+          position: fixed;
+          z-index: 1;
+          top: 0;
+          left: 0;
+          background-color: #111;
+          overflow-x: hidden;
+        }
+        /* Side navigation links */
+        .sidenav a {
+          color: #7FFF00;
+          padding: 16px;
+          text-decoration: none;
+          display: block;
+        }
+        /* Change color on hover */
+        .sidenav a:hover {
+          background-color: #7FFF00;
+          color: black;
+        }
+        /* Style the content */
+        .content {
+          margin-left: 200px;
+          padding-left: 20px;
+        }
+        p {
+            padding: 15px;
+            border-style: solid;
+            border-width: 3px;
+            font-size: 110%;
+            font-weight: 600;
+            color: #555;
+            border-color: #ddd;
+            box-sizing: border-box;
+        }
+        h2 {
+            padding: 15px;
+            border-left-style: solid;
+            border-width: 7px;
+            font-size: 150%;
+            font-weight: 600;
+            color: #7fff00;
+            box-sizing: border-box;
+        }
+        h3 {
+            padding: 15px;
+            border-left-style: solid;
+            border-width: 7px;
+            font-size: 130%;
+            font-weight: 600;
+            color: #7fff00;
+            background-color: #ccc;
+            box-sizing: border-box;
+        }
+        .notice {
+            padding: 15px;
+            border-style: solid;
+            border-width: 2px;
+            font-size: 100%;
+            font-weight: 600;
+            color: #555;
+            border-color: #e60000;
+            box-sizing: border-box;
+        }
+        .version {
+            padding: 15px;
+            border-style: solid;
+            border-width: 7px;
+            font-size: 100%;
+            font-weight: 600;
+            color: #7fff00;
+            border-color: #7fff00;
+            box-sizing: border-box;
+        }
+        table, th {
+            color: #7fff00;
+        }
+        td {
+            padding: 10px;
+            padding-left: 25px;
+            padding-right: 35px;
+            font-size: 110%;
+            font-weight: 500;
+            border-left: 1px solid #7fff00;
+        }
+</style> <h1>&gt;CodeRandom:Downloads</h1>
+    
+  </body>
+</html>
