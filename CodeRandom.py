@@ -20,7 +20,6 @@ levels = {
 
 # Custom theme
 
-char = 'abcdefghijklmnopqrstuvwxyz'
 
 sg.LOOK_AND_FEEL_TABLE['.CodeyGreen'] = {'BACKGROUND': '#000000',
                                          'TEXT': '#7FFF00',
@@ -74,180 +73,188 @@ def get_keys(dictionary):
 global SETTINGS
 SETTINGS = read_file('settings.txt', dir_path)
 
-pygame.mixer.init()
-pygame.mixer.music.load(dir_path + "/mp3/bg/" + r.choice(os.listdir(dir_path + "/mp3/bg")))
-pygame.mixer.music.play(999)
 
 
 # Game Settings
+while True:
+    sg.theme('GrayGrayGray')
 
-def make_settings_wn(path):
-    # Left side of the settings window
+    song = dir_path + "/mp3/bg/" + r.choice(os.listdir(dir_path + "/mp3/bg"))
+    print(song)
 
-    layout_left = [
-        [sg.Text('Difficulty')],
-        [sg.Text('Theme')],
-        [sg.Text('Lives')],
-        [sg.Text('Time Trial')]
-    ]
+    pygame.mixer.init()
+    pygame.mixer.music.load(song)
+    pygame.mixer.music.play(999)
 
-    # Right side of the settings window
-    # noinspection PyTypeChecker
-    layout_right = [
-        [sg.Spin(get_keys(levels), k='difficulty', s=(20, 1))],
-        [sg.InputCombo(sg.theme_list(), k='custom_theme', default_value=SETTINGS['last_theme'])],
-        [sg.Checkbox('', default=False, k='do_lives', disabled=True)],
-        [sg.Checkbox('', default=True, k='stopwatch_active')]
-    ]
-
-    # combine settings layouts
-    # noinspection PyTypeChecker
-    settings_layout = [[sg.Text('Settings', justification='center')],
-                       [sg.Column(layout_left, background_color=None),
-                        sg.Column(layout_right, background_color=None, element_justification='right')],
-                       [sg.Button('Play', k='start_game_from_settings'),
-                        sg.Button("", image_filename=path + '\\img\\information_i.png', size=(30, 30),
-                                  button_color=None,
-                                  key="settings_help")]
-                       ]
-
-    return sg.Window('CodeRandom', settings_layout, finalize=True, font='Comic 18 bold', size=(600, 400))
+    char = 'abcdefghijklmnopqrstuvwxyz'
 
 
-window = make_settings_wn(dir_path)
+    def make_settings_wn(path):
+        # Left side of the settings window
 
-event, values = window.read()
+        layout_left = [
+            [sg.Text('Difficulty')],
+            [sg.Text('Theme')],
+            [sg.Text('Lives')],
+            [sg.Text('Time Trial')]
+        ]
 
-if event == 'start_game_from_settings':
-    launch_main_wn = True
-else:
-    launch_main_wn = False
-
-if values['stopwatch_active']:
-    start_time = time.time()
-    print(start_time)
-    timing = True
-else:
-    timing = False
-
-window.close()
-
-sg.theme(values['custom_theme'])
-
-# Load Master Puzzle and Hint Puzzles
-
-puzzle_steps = levels.get(values['difficulty'])
-
-master_puzzle = r.choice(load_words.load_words(r.randint(4, 7)))
-
-iteration = 0
-for each in puzzle_steps:
-    if each == 'shift':
-        iteration += 1
-        key_shift = r.randint(1, 25)
-        char = ciphers.shift(key_shift, char)
+        # Right side of the settings window
         # noinspection PyTypeChecker
-        puzzle_steps.insert(iteration, [each, key_shift])
-        puzzle_steps.pop(iteration - 1)
-    elif each == 'flip':
-        char = ciphers.flip(char)
-    elif each == 'none':
-        iteration += 1
-        continue
+        layout_right = [
+            [sg.Spin(get_keys(levels), k='difficulty', s=(20, 1))],
+            [sg.InputCombo(sg.theme_list(), k='custom_theme', default_value=SETTINGS['last_theme'])],
+            [sg.Checkbox('', default=False, k='do_lives', disabled=True)],
+            [sg.Checkbox('', default=True, k='stopwatch_active')]
+        ]
 
-print(char)
-print(master_puzzle)
+        # combine settings layouts
+        # noinspection PyTypeChecker
+        settings_layout = [[sg.Text('Settings', justification='center')],
+                           [sg.Column(layout_left, background_color=None),
+                            sg.Column(layout_right, background_color=None, element_justification='right')],
+                           [sg.Button('Play', k='start_game_from_settings'),
+                            sg.Button("", image_filename=path + '\\img\\information_i.png', size=(30, 30),
+                                      button_color=None,
+                                      key="settings_help")]
+                           ]
 
-master_puzzle_encrypted = ciphers.encrypt(char, master_puzzle)
+        return sg.Window('CodeRandom', settings_layout, finalize=True, font='Comic 18 bold', size=(600, 400))
 
-hint_puzzle_words = [r.choice(load_words.load_words(4)), r.choice(load_words.load_words(4)),
-                     r.choice(load_words.load_words(4))]
 
-hint_order = []
+    window = make_settings_wn(dir_path)
 
-print(puzzle_steps)
-for step in puzzle_steps:
-    hint_letters = [r.choice(
-        ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-         'w', 'x', 'y', 'z']), r.choice(
-        ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-         'w', 'x', 'y', 'z']), r.choice(
-        ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-         'w', 'x', 'y', 'z'])]
-    original_letters = hint_letters.copy()
-    if type(step) is list:
-        print(True)
-        if step[0] == 'shift':
-            letters = ciphers.string_from_list(hint_letters)
-            letters = ciphers.shift(step[1], letters)
-            hint_order.append([original_letters, list(letters)])
-    if step == 'flip':
-        print('flip')
-        letters = ciphers.string_from_list(hint_letters)
-        letters = ciphers.encrypt(ciphers.flip(string.ascii_lowercase), hint_letters)
-        hint_order.append([original_letters, list(letters)])
-    if step == 'none':
-        hint_order.append('none')
+    event, values = window.read()
 
-current_hint = 0
-# hint_order[current_hint][0][0] + ' -> ' + hint_order[current_hint][1][0] + '\n' + hint_order[current_hint][0][1] + ' -> ' + hint_order[current_hint][1][1] + '\n' + hint_order[current_hint][0][2] + ' -> ' + hint_order[current_hint][1][2]
-# Notes
+    if event != 'start_game_from_settings':
+        break
 
-n = open(dir_path + '\\notes.txt', 'r')  # Read Stored Notes
-
-notes_layout = [
-    [sg.Text("Notes")],
-    [sg.Multiline(n.read(), size=(28, 32))]
-]
-
-n.close()
-
-# Hints Puzzles
-
-hint_card_layout = []
-
-for each in hint_order:
-    if each == 'none':
-        current_hint += 1
+    if values['stopwatch_active']:
+        start_time = int(time.time())
+        timing = True
     else:
-        hint_card_layout.append(sg.Frame('', layout=[[sg.Text(str(current_hint + 1) + '.\n' +
-                                                              hint_order[current_hint][0][0] + ' -> ' +
-                                                              hint_order[current_hint][1][0] + '\n' +
-                                                              hint_order[current_hint][0][1] + ' -> ' +
-                                                              hint_order[current_hint][1][1] + '\n' +
-                                                              hint_order[current_hint][0][2] + ' -> ' +
-                                                              hint_order[current_hint][1][2])]],
-                                         element_justification='center', size=(120, 150)))
-        current_hint += 1
+        timing = False
 
-hint_p_layout = [
-    hint_card_layout
-]
+    window.close()
 
-# Master Puzzle
-# noinspection PyTypeChecker
-hint_m_layout = [
-    [sg.Text('Master Puzzle: ' + master_puzzle_encrypted)],
-    [sg.Image(dir_path + '/img/heart.png', background_color=None),
-     sg.Image(dir_path + '/img/heart.png', background_color=None),
-     sg.Image(dir_path + '/img/heart.png', background_color=None)],
-    [sg.Input('', k='input_master'), sg.Button('Test', k='test_master')]
-]
+    sg.theme(values['custom_theme'])
 
-# Main Window
+    # Load Master Puzzle and Hint Puzzles
 
-puzzle_layout = [[sg.Frame('', hint_m_layout)],
-                 [sg.Frame('', hint_p_layout)]]
+    puzzle_steps = levels.get(values['difficulty'])
 
-layout = [
-    [sg.Menu([['&CodeRandom', ['&Form', '&Help', '&Report Bugs', '&Quit']]], font='Verdana', size=(24, 24),
-             pad=(10, 10))],
-    [sg.Column(puzzle_layout), sg.Column(notes_layout)]
-]
+    master_puzzle = r.choice(load_words.load_words(r.randint(4, 7)))
 
-# time.sleep(7)
+    iteration = 0
+    for each in puzzle_steps:
+        if each == 'shift':
+            key_shift = r.randint(1, 25)
+            char = ciphers.shift(key_shift, char)
+            # noinspection PyTypeChecker
+            print(iteration)
+            puzzle_steps[iteration] = ([each, key_shift])
+        elif each == 'flip':
+            char = ciphers.flip(char)
+        elif each == 'none':
+            continue
+        iteration += 1
 
-if launch_main_wn:
+    print(char)
+    print(master_puzzle)
+
+    master_puzzle_encrypted = ciphers.encrypt(char, master_puzzle)
+
+    hint_puzzle_words = [r.choice(load_words.load_words(4)), r.choice(load_words.load_words(4)),
+                         r.choice(load_words.load_words(4))]
+
+    hint_order = []
+
+    print(puzzle_steps)
+
+    step_num = 0
+
+    for step in puzzle_steps:
+        hint_letters = r.sample(string.ascii_lowercase, k=3)
+        original_letters = hint_letters.copy()
+
+        if type(step) is list:
+
+            if step[0] == 'shift':
+
+                letters = ciphers.string_from_list(hint_letters)
+                letters = ciphers.shift(step[1], letters)
+                hint_order.append([original_letters, list(letters)])
+
+        if step == 'flip':
+
+            letters = ciphers.string_from_list(hint_letters)
+            letters = ciphers.encrypt(ciphers.flip(string.ascii_lowercase), hint_letters)
+            hint_order.append([original_letters, list(letters)])
+
+        if step == 'none':
+
+            hint_order.append('none')
+        step_num += 1
+
+    current_hint = 0
+    # hint_order[current_hint][0][0] + ' -> ' + hint_order[current_hint][1][0] + '\n' + hint_order[current_hint][0][1] + ' -> ' + hint_order[current_hint][1][1] + '\n' + hint_order[current_hint][0][2] + ' -> ' + hint_order[current_hint][1][2]
+    # Notes
+
+    n = open(dir_path + '\\notes.txt', 'r')  # Read Stored Notes
+
+    notes_layout = [
+        [sg.Text("Notes")],
+        [sg.Multiline(n.read(), size=(28, 32))]
+    ]
+
+    n.close()
+
+    # Hints Puzzles
+
+    hint_card_layout = []
+
+    for each in hint_order:
+        if each == 'none':
+            current_hint += 1
+        else:
+            hint_card_layout.append(sg.Frame('', layout=[[sg.Text(str(current_hint + 1) + '.\n' +
+                                                                  hint_order[current_hint][0][0] + ' -> ' +
+                                                                  hint_order[current_hint][1][0] + '\n' +
+                                                                  hint_order[current_hint][0][1] + ' -> ' +
+                                                                  hint_order[current_hint][1][1] + '\n' +
+                                                                  hint_order[current_hint][0][2] + ' -> ' +
+                                                                  hint_order[current_hint][1][2])]],
+                                             element_justification='center', size=(120, 150)))
+            current_hint += 1
+
+    hint_p_layout = [
+        hint_card_layout
+    ]
+
+    # Master Puzzle
+    # noinspection PyTypeChecker
+    hint_m_layout = [
+        [sg.Text('Master Puzzle: ' + master_puzzle_encrypted)],
+        [sg.Image(dir_path + '/img/heart.png', background_color=None),
+         sg.Image(dir_path + '/img/heart.png', background_color=None),
+         sg.Image(dir_path + '/img/heart.png', background_color=None)],
+        [sg.Input('', k='input_master'), sg.Button('Test', k='test_master')]
+    ]
+
+    # Main Window
+
+    puzzle_layout = [[sg.Frame('', hint_m_layout)],
+                     [sg.Frame('', hint_p_layout)]]
+
+    toolbar = [sg.Text('CodeRandom'), sg.Button('Form'), sg.Button('Help'), sg.Button('Report Bugs'), sg.Button('Quit')]
+
+    layout = [
+        toolbar,
+        [sg.Column(puzzle_layout), sg.Column(notes_layout)]
+    ]
+
+    # time.sleep(7)
+
     wn = sg.Window('CodeRandom', layout, finalize=True, no_titlebar=True, font='Verdana 16 bold', size=(1280, 720))
 
     while True:
@@ -256,6 +263,7 @@ if launch_main_wn:
 
         if event in ('Quit', None):
             print(values)
+            wn.close()
             break
         if event == 'Help':
             webbrowser.open_new_tab("https://coderandom.w3spaces.com/")
@@ -265,17 +273,26 @@ if launch_main_wn:
             webbrowser.open_new_tab('https://github.com/summersphinx/CodeRandom/issues')
         if event == 'test_master':
             if values['input_master'] == master_puzzle:
-                sg.PopupOK('You are Correct!')
-                break
+                if timing:
+                    end_time = int(time.time())
+                    print(end_time)
+                    msg = 'You are Correct! Took {} Seconds'.format(end_time - start_time)
+                else:
+                    msg = 'You are Correct!'
+                pygame.mixer.music.load(dir_path + "/mp3/effects/win.mp3")
+                pygame.mixer.music.stop()
+                pygame.mixer.music.play()
+                sg.PopupOK(msg)
             if values['input_master'] != master_puzzle:
                 sg.PopupOK('You are Incorrect!')
+                continue
         if event == 'update_hint_p':
             pass
         if event == 'test_hint':
             if values['user_hint'] == master_puzzle:
-                if True:
-                    end_time = time.time()
-                    print(end_time - start_time)
+                if timing:
+                    end_time = int(time.time())
+                    print(end_time)
                     msg = 'You are Correct! Took {} Seconds'.format(end_time - start_time)
                 else:
                     msg = 'You are Correct!'
@@ -285,6 +302,7 @@ if launch_main_wn:
                 sg.PopupOK(msg)
             if values['user_hint'] != master_puzzle:
                 sg.PopupOK('You are Incorrect!')
-    wn.close()
+                continue
+        wn.close()
 
 pygame.mixer.music.stop()
