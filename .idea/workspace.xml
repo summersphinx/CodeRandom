@@ -8,6 +8,10 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CodeRandom.exe" beforeDir="false" afterPath="$PROJECT_DIR$/CodeRandom.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CodeRandom.py" beforeDir="false" afterPath="$PROJECT_DIR$/CodeRandom.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/notes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/game/notes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/keys.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mods/ciphers.py" beforeDir="false" afterPath="$PROJECT_DIR$/mods/ciphers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/timer_Test.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +46,7 @@
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.CodeRandom">
+  <component name="RunManager" selected="Python.ciphers">
     <configuration name="CodeRandom" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="CodeRandom" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -65,9 +69,6 @@
       <module name="CodeRandom" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/mods" />
       <option name="IS_MODULE_SDK" value="true" />

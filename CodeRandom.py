@@ -15,7 +15,9 @@ levels = {
     'Introduction': ['shift'],
     'Flipping Things Up': ['flip'],
     'More Complications': ['shift', 'flip'],
-    '3 Peas in a Pod': ['shift', 'flip', 'shift']
+    '3 Peas in a Pod': ['shift', 'flip', 'shift'],
+    '3 More Peas': ['flip', 'shift', 'flip'],
+    'Fours Company': ['shift', 'flip', 'shift', 'flip']
 }
 
 # Custom theme
@@ -73,8 +75,6 @@ def get_keys(dictionary):
 global SETTINGS
 SETTINGS = read_file('settings.txt', dir_path)
 
-
-
 # Game Settings
 while True:
     sg.theme('GrayGrayGray')
@@ -89,7 +89,7 @@ while True:
     char = 'abcdefghijklmnopqrstuvwxyz'
 
 
-    def make_settings_wn(path):
+    def make_settings_wn():
         # Left side of the settings window
 
         layout_left = [
@@ -113,16 +113,13 @@ while True:
         settings_layout = [[sg.Text('Settings', justification='center')],
                            [sg.Column(layout_left, background_color=None),
                             sg.Column(layout_right, background_color=None, element_justification='right')],
-                           [sg.Button('Play', k='start_game_from_settings'),
-                            sg.Button("", image_filename=path + '\\img\\information_i.png', size=(30, 30),
-                                      button_color=None,
-                                      key="settings_help")]
+                           [sg.Button('Play', k='start_game_from_settings')]
                            ]
 
         return sg.Window('CodeRandom', settings_layout, finalize=True, font='Comic 18 bold', size=(600, 400))
 
 
-    window = make_settings_wn(dir_path)
+    window = make_settings_wn()
 
     event, values = window.read()
 
@@ -149,23 +146,14 @@ while True:
     for each in puzzle_steps:
         if each == 'shift':
             key_shift = r.randint(1, 25)
-            char = ciphers.shift(key_shift, char)
             # noinspection PyTypeChecker
-            print(iteration)
             puzzle_steps[iteration] = ([each, key_shift])
-        elif each == 'flip':
-            char = ciphers.flip(char)
-        elif each == 'none':
-            continue
+            print(puzzle_steps)
         iteration += 1
 
-    print(char)
     print(master_puzzle)
 
-    master_puzzle_encrypted = ciphers.encrypt(char, master_puzzle)
-
-    hint_puzzle_words = [r.choice(load_words.load_words(4)), r.choice(load_words.load_words(4)),
-                         r.choice(load_words.load_words(4))]
+    master_puzzle_encrypted = ciphers.encrypt(puzzle_steps, master_puzzle)
 
     hint_order = []
 
@@ -180,19 +168,16 @@ while True:
         if type(step) is list:
 
             if step[0] == 'shift':
-
                 letters = ciphers.string_from_list(hint_letters)
                 letters = ciphers.shift(step[1], letters)
                 hint_order.append([original_letters, list(letters)])
 
         if step == 'flip':
-
             letters = ciphers.string_from_list(hint_letters)
             letters = ciphers.encrypt(ciphers.flip(string.ascii_lowercase), hint_letters)
             hint_order.append([original_letters, list(letters)])
 
         if step == 'none':
-
             hint_order.append('none')
         step_num += 1
 
@@ -202,10 +187,10 @@ while True:
 
     n = open(dir_path + '\\notes.txt', 'r')  # Read Stored Notes
 
-    notes_layout = [
-        [sg.Text("Notes")],
-        [sg.Multiline(n.read(), size=(28, 32))]
-    ]
+    notes_layout = [[sg.Frame('', [[sg.Text("Notes")],
+                                   [sg.Multiline(n.read(), size=(32, 32))]], size=(640, 710))]
+
+                    ]
 
     n.close()
 
@@ -238,19 +223,19 @@ while True:
         [sg.Image(dir_path + '/img/heart.png', background_color=None),
          sg.Image(dir_path + '/img/heart.png', background_color=None),
          sg.Image(dir_path + '/img/heart.png', background_color=None)],
-        [sg.Input('', k='input_master'), sg.Button('Test', k='test_master')]
+        [sg.Input('', k='input_master', s=(15, 1)), sg.Button('Test', k='test_master')]
     ]
 
     # Main Window
 
-    puzzle_layout = [[sg.Frame('', hint_m_layout)],
-                     [sg.Frame('', hint_p_layout)]]
+    puzzle_layout = [[sg.Frame('', hint_m_layout, size=(620, 350))],
+                     [sg.Frame('', hint_p_layout, size=(620, 350))]]
 
     toolbar = [sg.Text('CodeRandom'), sg.Button('Form'), sg.Button('Help'), sg.Button('Report Bugs'), sg.Button('Quit')]
 
     layout = [
         toolbar,
-        [sg.Column(puzzle_layout), sg.Column(notes_layout)]
+        [sg.Frame('', [[sg.Column(puzzle_layout, size=(620, 700))]]), sg.Frame('', [[sg.Column(notes_layout, size=(640, 710))]])]
     ]
 
     # time.sleep(7)
@@ -272,10 +257,11 @@ while True:
         if event == 'Report Bugs':
             webbrowser.open_new_tab('https://github.com/summersphinx/CodeRandom/issues')
         if event == 'test_master':
-            if values['input_master'] == master_puzzle:
+            if values['input_master'].lower() == master_puzzle:
                 if timing:
                     end_time = int(time.time())
                     print(end_time)
+                    # noinspection PyUnboundLocalVariable
                     msg = 'You are Correct! Took {} Seconds'.format(end_time - start_time)
                 else:
                     msg = 'You are Correct!'
