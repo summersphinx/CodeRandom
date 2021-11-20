@@ -25,7 +25,7 @@ levels = {
 
 sg.LOOK_AND_FEEL_TABLE['.CodeyGreen'] = {'BACKGROUND': '#000000',
                                          'TEXT': '#7FFF00',
-                                         'INPUT': '#000',
+                                         'INPUT': '#333',
                                          'TEXT_INPUT': '#7FFF00',
                                          'SCROLL': '#99CC99',
                                          'BUTTON': ('#7FFF00', '#000'),
@@ -174,7 +174,7 @@ while True:
 
         if step == 'flip':
             letters = ciphers.string_from_list(hint_letters)
-            letters = ciphers.encrypt(ciphers.flip(string.ascii_lowercase), hint_letters)
+            letters = ciphers.encipher(ciphers.flip(string.ascii_lowercase), hint_letters)
             hint_order.append([original_letters, list(letters)])
 
         if step == 'none':
@@ -188,7 +188,7 @@ while True:
     n = open(dir_path + '\\notes.txt', 'r')  # Read Stored Notes
 
     notes_layout = [[sg.Frame('', [[sg.Text("Notes")],
-                                   [sg.Multiline(n.read(), size=(32, 32))]], size=(640, 710))]
+                                   [sg.Multiline(n.read(), size=(30, 24))]], size=(640, 600))]
 
                     ]
 
@@ -235,12 +235,15 @@ while True:
 
     layout = [
         toolbar,
-        [sg.Frame('', [[sg.Column(puzzle_layout, size=(620, 700))]]), sg.Frame('', [[sg.Column(notes_layout, size=(640, 710))]])]
+        [sg.Frame('', [[sg.Column(puzzle_layout, size=(620, 700))]]),
+         sg.Frame('', [[sg.Column(notes_layout, size=(640, 700))]])]
     ]
 
     # time.sleep(7)
 
     wn = sg.Window('CodeRandom', layout, finalize=True, no_titlebar=True, font='Verdana 16 bold', size=(1280, 720))
+
+    print(sg.theme())
 
     while True:
 
