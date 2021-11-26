@@ -14,24 +14,25 @@ from mods import ciphers
 levels = {
     'Introduction': ['shift'],
     'Flipping Things Up': ['flip'],
-    'More Complications': ['shift', 'flip'],
+    '2 is True': ['shift', 'flip'],
+    'Oink Oink': ['pig'],
     '3 Peas in a Pod': ['shift', 'flip', 'shift'],
-    '3 More Peas': ['flip', 'shift', 'flip'],
-    'Fours Company': ['shift', 'flip', 'shift', 'flip']
+    'Fours Company': ['shift', 'flip', 'shift', 'flip'],
+    'A Small Inconvenience': ['shift', 'flip', 'pig']
 }
 
 # Custom theme
 
 
-sg.LOOK_AND_FEEL_TABLE['.CodeyGreen'] = {'BACKGROUND': '#000000',
-                                         'TEXT': '#7FFF00',
-                                         'INPUT': '#333',
-                                         'TEXT_INPUT': '#7FFF00',
-                                         'SCROLL': '#99CC99',
-                                         'BUTTON': ('#7FFF00', '#000'),
-                                         'PROGRESS': ('#D1826B', '#CC8019'),
-                                         'BORDER': 1, 'SLIDER_DEPTH': 0,
-                                         'PROGRESS_DEPTH': 0, }
+sg.LOOK_AND_FEEL_TABLE['CodeyGreen'] = {'BACKGROUND': '#000000',
+                                        'TEXT': '#7FFF00',
+                                        'INPUT': '#333',
+                                        'TEXT_INPUT': '#7FFF00',
+                                        'SCROLL': '#99CC99',
+                                        'BUTTON': ('#7FFF00', '#000'),
+                                        'PROGRESS': ('#D1826B', '#CC8019'),
+                                        'BORDER': 1, 'SLIDER_DEPTH': 0,
+                                        'PROGRESS_DEPTH': 0, }
 
 sg.theme('GrayGrayGray')
 
@@ -93,7 +94,7 @@ while True:
         # Left side of the settings window
 
         layout_left = [
-            [sg.Text('Difficulty')],
+            [sg.Text('Level')],
             [sg.Text('Theme')],
             [sg.Text('Lives')],
             [sg.Text('Time Trial')]
@@ -102,8 +103,10 @@ while True:
         # Right side of the settings window
         # noinspection PyTypeChecker
         layout_right = [
-            [sg.Spin(get_keys(levels), k='difficulty', s=(20, 1))],
-            [sg.InputCombo(sg.theme_list(), k='custom_theme', default_value=SETTINGS['last_theme'])],
+            [sg.Spin(get_keys(levels), k='difficulty', s=(21, 1))],
+            [sg.InputCombo(
+                ['CodeyGreen', 'Black', 'Dark', 'DarkBlue16', 'DarkGrey', 'DarkGreen5', 'DarkGrey12', 'LightBlue6',
+                 'Purple', 'Python', 'Reddit'], k='custom_theme', default_value=SETTINGS['last_theme'])],
             [sg.Checkbox('', default=False, k='do_lives', disabled=True)],
             [sg.Checkbox('', default=True, k='stopwatch_active')]
         ]
@@ -152,8 +155,16 @@ while True:
         iteration += 1
 
     print(master_puzzle)
+    master_puzzle_encrypted = [sg.Text('Master Puzzle: ')]
 
-    master_puzzle_encrypted = ciphers.encrypt(puzzle_steps, master_puzzle)
+    for letter in master_puzzle:
+        print(letter)
+        if 'pig' in puzzle_steps:
+            master_puzzle_encrypted.append(
+                sg.Image(source=dir_path + '/img/' + values['custom_theme'] + '/pig_' + letter + '.png'))
+        else:
+            master_puzzle_encrypted.append(sg.Text(ciphers.encrypt(puzzle_steps, letter)[0]))
+            print(master_puzzle_encrypted)
 
     hint_order = []
 
@@ -219,7 +230,7 @@ while True:
     # Master Puzzle
     # noinspection PyTypeChecker
     hint_m_layout = [
-        [sg.Text('Master Puzzle: ' + master_puzzle_encrypted)],
+        master_puzzle_encrypted,
         [sg.Image(dir_path + '/img/heart.png', background_color=None),
          sg.Image(dir_path + '/img/heart.png', background_color=None),
          sg.Image(dir_path + '/img/heart.png', background_color=None)],
@@ -231,7 +242,7 @@ while True:
     puzzle_layout = [[sg.Frame('', hint_m_layout, size=(620, 350))],
                      [sg.Frame('', hint_p_layout, size=(620, 350))]]
 
-    toolbar = [sg.Text('CodeRandom'), sg.Button('Form'), sg.Button('Help'), sg.Button('Report Bugs'), sg.Button('Quit')]
+    toolbar = [sg.Text('CodeRandom'), sg.Button('Help'), sg.Button('Report Bugs'), sg.Button('Quit')]
 
     layout = [
         toolbar,

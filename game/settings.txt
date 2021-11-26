@@ -2,5 +2,5 @@
 'difficulty': 1,
 'stopwatch_active': True,
 'have_notes': False,
-'last_theme': '.CodeyGreen'
+'last_theme': 'CodeyGreen'
 }
