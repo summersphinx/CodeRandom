@@ -188,7 +188,11 @@ while True:
 
     window.close()
 
-    sg.theme(values['custom_theme'])
+    if event =='custom':
+
+        sg.theme(values2['custom_theme'])
+    else:
+        sg.theme(values['custom_theme'])
 
     # Load Master Puzzle and Hint Puzzles
 
@@ -317,7 +321,7 @@ while True:
 
     # time.sleep(7)
 
-    wn = sg.Window('CodeRandom', layout, finalize=True, no_titlebar=True, font='Verdana 16 bold', size=(1280, 720), return_keyboard_events=True)
+    wn = sg.Window('CodeRandom', layout, finalize=True, no_titlebar=True, font='Verdana 16 bold', size=(1280, 720))
 
     print(sg.theme())
 
