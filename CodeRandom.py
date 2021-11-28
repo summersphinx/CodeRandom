@@ -17,8 +17,10 @@ levels = {
     '2 is True': ['shift', 'flip'],
     'Oink Oink': ['pig'],
     '3 Peas in a Pod': ['shift', 'flip', 'shift'],
-    'Fours Company': ['shift', 'flip', 'shift', 'flip'],
-    'A Small Inconvenience': ['shift', 'flip', 'pig']
+    'Tapping the System': ['tap'],
+    'Fours Company': ['shift', 'flip', 'shift', 'tap'],
+    'A Small Inconvenience': ['shift', 'flip', 'pig'],
+    'Madness': ['flip', 'shift', 'flip', 'shift', 'pig']
 }
 
 # Custom theme
@@ -116,18 +118,67 @@ while True:
         settings_layout = [[sg.Text('Settings', justification='center')],
                            [sg.Column(layout_left, background_color=None),
                             sg.Column(layout_right, background_color=None, element_justification='right')],
-                           [sg.Button('Play', k='start_game_from_settings')]
+                           [sg.Button('Play', k='start_game_from_settings'), sg.Button('Custom Game', k='custom')]
                            ]
 
         return sg.Window('CodeRandom', settings_layout, finalize=True, font='Comic 18 bold', size=(600, 400))
+
+
+    def make_custom_wn():
+        # Left side of the settings window
+
+        layout_left = [
+            [sg.Text('Game Settings')],
+            [sg.InputCombo(
+                ['CodeyGreen', 'Black', 'Dark', 'DarkBlue16', 'DarkGrey', 'DarkGreen5', 'DarkGrey12', 'LightBlue6',
+                 'Purple', 'Python', 'Reddit'], k='custom_theme', default_value=SETTINGS['last_theme'])],
+            [sg.Spin([1, 2, 3, 4], k='difficulty'), sg.Text('Step Count')],
+            [sg.Checkbox('Stopwatch', default=True, k='stopwatch_active')]
+        ]
+
+        # Right side of the settings window
+        # noinspection PyTypeChecker
+        layout_right = [
+            [sg.Text('Game Ciphers')],
+            [sg.Checkbox('Shift', k='shift')],
+            [sg.Checkbox('Flip', k='flip')],
+            [sg.Checkbox('Pigpen', k='pig')]
+        ]
+
+        # combine settings layouts
+        # noinspection PyTypeChecker
+        settings_layout = [
+            [sg.Text('Custom Game', justification='center')],
+            [sg.Text('Game Settings')],
+            [sg.InputCombo(
+                ['CodeyGreen', 'Black', 'Dark', 'DarkBlue16', 'DarkGrey', 'DarkGreen5', 'DarkGrey12', 'LightBlue6',
+                 'Purple', 'Python', 'Reddit'], k='custom_theme', default_value=SETTINGS['last_theme'])],
+            [sg.Spin([1, 2, 3, 4], k='steps'), sg.Text('Step Count')],
+            [sg.Checkbox('Stopwatch', default=True, k='stopwatch_active')],
+            [sg.Text('Game Ciphers')],
+            [sg.Checkbox('Shift', k='shift')],
+            [sg.Checkbox('Flip', k='flip')],
+            [sg.Checkbox('Pigpen', k='pig')],
+            [sg.Button('Play', k='start_game_from_custom')]
+        ]
+
+        return sg.Window('CodeRandom - Custom', settings_layout, finalize=True, font='Comic 18 bold', size=(400, 600), no_titlebar=True)
 
 
     window = make_settings_wn()
 
     event, values = window.read()
 
-    if event != 'start_game_from_settings':
+    if event != 'start_game_from_settings' and event != 'custom':
         break
+
+    if event == 'custom':
+        window.close()
+        custom = make_custom_wn()
+        event2, values2 = custom.read()
+        if event2 != 'start_game_from_custom':
+            break
+        custom.close()
 
     if values['stopwatch_active']:
         start_time = int(time.time())
@@ -141,7 +192,21 @@ while True:
 
     # Load Master Puzzle and Hint Puzzles
 
-    puzzle_steps = levels.get(values['difficulty'])
+    if event != 'custom':
+        puzzle_steps = levels.get(values['difficulty'])
+
+    else:
+        new_steps = [None]
+        if values2['shift']:
+            new_steps.append('shift')
+        if values2['flip']:
+            new_steps.append('flip')
+        if values2['pig']:
+            new_steps.append('pig')
+        print(new_steps)
+        puzzle_steps = []
+        for i in range(values2['steps']):
+            puzzle_steps.append(r.choice(new_steps))
 
     master_puzzle = r.choice(load_words.load_words(r.randint(4, 7)))
 
@@ -158,13 +223,13 @@ while True:
     master_puzzle_encrypted = [sg.Text('Master Puzzle: ')]
 
     for letter in master_puzzle:
-        print(letter)
         if 'pig' in puzzle_steps:
             master_puzzle_encrypted.append(
                 sg.Image(source=dir_path + '/img/' + values['custom_theme'] + '/pig_' + letter + '.png'))
+        elif 'tap' in puzzle_steps:
+            master_puzzle_encrypted.append(sg.Text(ciphers.encrypt(puzzle_steps, letter)[0]))
         else:
             master_puzzle_encrypted.append(sg.Text(ciphers.encrypt(puzzle_steps, letter)[0]))
-            print(master_puzzle_encrypted)
 
     hint_order = []
 
@@ -252,7 +317,7 @@ while True:
 
     # time.sleep(7)
 
-    wn = sg.Window('CodeRandom', layout, finalize=True, no_titlebar=True, font='Verdana 16 bold', size=(1280, 720))
+    wn = sg.Window('CodeRandom', layout, finalize=True, no_titlebar=True, font='Verdana 16 bold', size=(1280, 720), return_keyboard_events=True)
 
     print(sg.theme())
 
@@ -270,7 +335,7 @@ while True:
             webbrowser.open_new_tab('https://forms.gle/sMgiRuVWcKewB8wa7')
         if event == 'Report Bugs':
             webbrowser.open_new_tab('https://github.com/summersphinx/CodeRandom/issues')
-        if event == 'test_master':
+        if event in 'test_master':
             if values['input_master'].lower() == master_puzzle:
                 if timing:
                     end_time = int(time.time())

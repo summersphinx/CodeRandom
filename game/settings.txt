@@ -1,6 +1,3 @@
-{'is_save': False,
-'difficulty': 1,
-'stopwatch_active': True,
-'have_notes': False,
+{'difficulty': '',
 'last_theme': 'CodeyGreen'
 }

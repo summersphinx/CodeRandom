@@ -13,7 +13,7 @@ def flip(word):
     for each in word:
         new_word += string[ascii_lowercase.index(each)]
     string = ''.join(string)
-    return string
+    return new_word
 
 
 def string_from_list(l):
@@ -22,6 +22,41 @@ def string_from_list(l):
     for char in l:
         word += char
     return word
+
+def tap(word):
+
+    key = {
+        'a': (1, 1),
+        'b': (2, 1),
+        'c': (3, 1),
+        'd': (4, 1),
+        'e': (5, 1),
+        'f': (1, 2),
+        'g': (2, 2),
+        'h': (3, 2),
+        'i': (4, 2),
+        'j': (5, 2),
+        'k': (3, 1),
+        'l': (1, 3),
+        'm': (2, 3),
+        'n': (3, 3),
+        'o': (4, 3),
+        'p': (5, 3),
+        'q': (1, 4),
+        'r': (2, 4),
+        's': (3, 4),
+        't': (4, 4),
+        'u': (5, 4),
+        'v': (1, 5),
+        'w': (2, 5),
+        'x': (3, 5),
+        'y': (4, 5),
+        'z': (5, 5)
+    }
+    new_word = []
+    for each in word:
+        new_word.append(key[each])
+    return new_word
 
 
 def encipher(string, word):
@@ -46,10 +81,12 @@ def encrypt(steps, word):
         else:
             if step == 'flip':
                 word = flip(word)
+            elif step == 'tap':
+                word = tap(word)
 
         word = list(word)
 
     return word
 
-
-print(encrypt([['shift', 3], 'flip'], 'baby'))
+print(tap('abc'))
+print(encrypt(['tap'], 'abc'))
