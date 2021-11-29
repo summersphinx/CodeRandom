@@ -7,6 +7,9 @@
     <list default="true" id="f0172294-447e-4a65-9791-049bf65c14b8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CodeRandom.py" beforeDir="false" afterPath="$PROJECT_DIR$/CodeRandom.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/settings.txt" beforeDir="false" afterPath="$PROJECT_DIR$/game/settings.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mods/ciphers.py" beforeDir="false" afterPath="$PROJECT_DIR$/mods/ciphers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mods/words_alpha.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mods/words_alpha.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

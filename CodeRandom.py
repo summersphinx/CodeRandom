@@ -16,11 +16,9 @@ levels = {
     'Flipping Things Up': ['flip'],
     '2 is True': ['shift', 'flip'],
     'Oink Oink': ['pig'],
-    '3 Peas in a Pod': ['shift', 'flip', 'shift'],
+    '3 Peas in a Pod': ['shift', 'flip', 'tap'],
     'Tapping the System': ['tap'],
-    'Fours Company': ['shift', 'flip', 'shift', 'tap'],
-    'A Small Inconvenience': ['shift', 'flip', 'pig'],
-    'Madness': ['flip', 'shift', 'flip', 'shift', 'pig']
+    'A Small Inconvenience': ['shift', 'flip', 'pig']
 }
 
 # Custom theme
@@ -39,6 +37,7 @@ sg.LOOK_AND_FEEL_TABLE['CodeyGreen'] = {'BACKGROUND': '#000000',
 sg.theme('GrayGrayGray')
 
 global dir_path
+# noinspection PyRedeclaration
 dir_path = os.getcwd() + '/game'
 
 
@@ -62,7 +61,7 @@ def read_file(file, path):
 
 
 def save_settings(output):
-    save_file = open(dir_path + "/game/settings.txt", "w")
+    save_file = open(dir_path + "/settings.txt", "w")
     save_file.write(str(output))
     save_file.close()
 
@@ -76,6 +75,7 @@ def get_keys(dictionary):
 
 
 global SETTINGS
+# noinspection PyRedeclaration
 SETTINGS = read_file('settings.txt', dir_path)
 
 # Game Settings
@@ -103,18 +103,16 @@ while True:
         ]
 
         # Right side of the settings window
-        # noinspection PyTypeChecker
         layout_right = [
-            [sg.Spin(get_keys(levels), k='difficulty', s=(21, 1))],
+            [sg.Spin(get_keys(levels), initial_value=SETTINGS['difficulty'], k='difficulty', s=(21, 1))],
             [sg.InputCombo(
                 ['CodeyGreen', 'Black', 'Dark', 'DarkBlue16', 'DarkGrey', 'DarkGreen5', 'DarkGrey12', 'LightBlue6',
-                 'Purple', 'Python', 'Reddit'], k='custom_theme', default_value=SETTINGS['last_theme'])],
+                 'Purple', 'Python', 'Reddit'], k='custom_theme', default_value=SETTINGS['custom_theme'])],
             [sg.Checkbox('', default=False, k='do_lives', disabled=True)],
             [sg.Checkbox('', default=True, k='stopwatch_active')]
         ]
 
         # combine settings layouts
-        # noinspection PyTypeChecker
         settings_layout = [[sg.Text('Settings', justification='center')],
                            [sg.Column(layout_left, background_color=None),
                             sg.Column(layout_right, background_color=None, element_justification='right')],
@@ -125,28 +123,8 @@ while True:
 
 
     def make_custom_wn():
-        # Left side of the settings window
 
-        layout_left = [
-            [sg.Text('Game Settings')],
-            [sg.InputCombo(
-                ['CodeyGreen', 'Black', 'Dark', 'DarkBlue16', 'DarkGrey', 'DarkGreen5', 'DarkGrey12', 'LightBlue6',
-                 'Purple', 'Python', 'Reddit'], k='custom_theme', default_value=SETTINGS['last_theme'])],
-            [sg.Spin([1, 2, 3, 4], k='difficulty'), sg.Text('Step Count')],
-            [sg.Checkbox('Stopwatch', default=True, k='stopwatch_active')]
-        ]
-
-        # Right side of the settings window
-        # noinspection PyTypeChecker
-        layout_right = [
-            [sg.Text('Game Ciphers')],
-            [sg.Checkbox('Shift', k='shift')],
-            [sg.Checkbox('Flip', k='flip')],
-            [sg.Checkbox('Pigpen', k='pig')]
-        ]
-
-        # combine settings layouts
-        # noinspection PyTypeChecker
+        # Custom Game Layout
         settings_layout = [
             [sg.Text('Custom Game', justification='center')],
             [sg.Text('Game Settings')],
@@ -162,7 +140,8 @@ while True:
             [sg.Button('Play', k='start_game_from_custom')]
         ]
 
-        return sg.Window('CodeRandom - Custom', settings_layout, finalize=True, font='Comic 18 bold', size=(400, 600), no_titlebar=True)
+        return sg.Window('CodeRandom - Custom', settings_layout, finalize=True, font='Comic 18 bold', size=(400, 600),
+                         no_titlebar=True)
 
 
     window = make_settings_wn()
@@ -188,11 +167,14 @@ while True:
 
     window.close()
 
-    if event =='custom':
+    if event == 'custom':
 
+        # noinspection PyUnboundLocalVariable
         sg.theme(values2['custom_theme'])
+        save_settings(values2)
     else:
         sg.theme(values['custom_theme'])
+        save_settings(values)
 
     # Load Master Puzzle and Hint Puzzles
 
@@ -212,24 +194,31 @@ while True:
         for i in range(values2['steps']):
             puzzle_steps.append(r.choice(new_steps))
 
-    master_puzzle = r.choice(load_words.load_words(r.randint(4, 7)))
+    if 'tap' not in puzzle_steps:
+        master_puzzle = r.choice(load_words.load_words(r.randint(4, 7)))
+    else:
+        master_puzzle = r.choice(load_words.load_words(r.randint(3, 5)))
 
     iteration = 0
     for each in puzzle_steps:
+        print('a:')
+        print(each)
         if each == 'shift':
             key_shift = r.randint(1, 25)
             # noinspection PyTypeChecker
             puzzle_steps[iteration] = ([each, key_shift])
+            print("b:")
             print(puzzle_steps)
         iteration += 1
 
+    print('c:')
     print(master_puzzle)
     master_puzzle_encrypted = [sg.Text('Master Puzzle: ')]
 
     for letter in master_puzzle:
         if 'pig' in puzzle_steps:
             master_puzzle_encrypted.append(
-                sg.Image(source=dir_path + '/img/' + values['custom_theme'] + '/pig_' + letter + '.png'))
+                sg.Image(source=dir_path + '/img/' + values['custom_theme'] + '/pig_' + ciphers.encrypt(puzzle_steps, letter)[0] + '.png'))
         elif 'tap' in puzzle_steps:
             master_puzzle_encrypted.append(sg.Text(ciphers.encrypt(puzzle_steps, letter)[0]))
         else:
@@ -254,6 +243,7 @@ while True:
 
         if step == 'flip':
             letters = ciphers.string_from_list(hint_letters)
+            # noinspection PyRedeclaration
             letters = ciphers.encipher(ciphers.flip(string.ascii_lowercase), hint_letters)
             hint_order.append([original_letters, list(letters)])
 
@@ -330,6 +320,7 @@ while True:
         event, values = wn.read()
 
         if event in ('Quit', None):
+            sg.PopupOK('The word is: ' + master_puzzle)
             print(values)
             wn.close()
             break

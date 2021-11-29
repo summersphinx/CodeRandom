@@ -23,8 +23,8 @@ def string_from_list(l):
         word += char
     return word
 
-def tap(word):
 
+def tap(word):
     key = {
         'a': (1, 1),
         'b': (2, 1),
@@ -76,8 +76,8 @@ def encrypt(steps, word):
         if type(step) == list:
             if step[0] == 'shift':
                 word = shift(step[1], word)
+                print('d:')
                 print(word)
-
         else:
             if step == 'flip':
                 word = flip(word)
@@ -87,6 +87,3 @@ def encrypt(steps, word):
         word = list(word)
 
     return word
-
-print(tap('abc'))
-print(encrypt(['tap'], 'abc'))

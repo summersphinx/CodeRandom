@@ -1,3 +1,1 @@
-{'difficulty': '',
-'last_theme': 'CodeyGreen'
-}
+{'difficulty': 'Introduction', 'custom_theme': 'CodeyGreen', 'do_lives': False, 'stopwatch_active': True}
