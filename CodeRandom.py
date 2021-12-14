@@ -5,21 +5,11 @@ import string
 import webbrowser
 import time
 import pygame
+import urllib3
+import wget
 
 from mods import load_words
 from mods import ciphers
-
-# Levels
-
-levels = {
-    'Introduction': ['shift'],
-    'Flipping Things Up': ['flip'],
-    '2 is True': ['shift', 'flip'],
-    'Oink Oink': ['pig'],
-    '3 Peas in a Pod': ['shift', 'flip', 'tap'],
-    'Tapping the System': ['tap'],
-    'A Small Inconvenience': ['shift', 'flip', 'pig']
-}
 
 # Custom theme
 
@@ -40,6 +30,31 @@ global dir_path
 # noinspection PyRedeclaration
 dir_path = os.getcwd() + '/game'
 
+import smtplib as smtp
+# used to build the email
+from email.message import EmailMessage
+
+
+# create and send email
+def send_an_email(subject, message_text):
+
+    smtp_host, smtp_port = 'smtp.gmail.com', 587
+    server = smtp.SMTP(host=smtp_host, port=smtp_port)
+    server.starttls()
+    server.login(user='coderandom04@gmail.com', password='d#EJH4!LeaQPtP9M')
+
+    # create the email message headers and set the payload
+    msg = EmailMessage()
+    msg['From'] = 'coderandom04@gmail.com'
+    msg['To'] = 'summersphinx@duck.com'
+    msg['Subject'] = subject
+    msg.set_payload(message_text)
+
+    # open the email server and send the message
+    server.send_message(msg)
+
+    server.close()
+
 
 # Create a var for game settings
 
@@ -54,7 +69,7 @@ def read_file(file, path):
         dict(new_dict)
         f.close()
         return new_dict
-    except:
+    except Exception:
         f = open(path + '/' + file)
         x = f.read()
         return x
@@ -77,10 +92,48 @@ def get_keys(dictionary):
 global SETTINGS
 # noinspection PyRedeclaration
 SETTINGS = read_file('settings.txt', dir_path)
+run_game = True
+
+
+class CheckVersion:
+    http = urllib3.PoolManager()
+    latest_version = http.request('GET', 'https://coderandom.w3spaces.com/version.txt')
+    latest_version = float(latest_version.data)
+    try:
+        current_version = read_file('version.txt', dir_path)
+        if str(latest_version) != current_version:
+            if sg.PopupYesNo('New Version Available! \nUpdate Now?\nCurrent: {}\nLatest: {}'.format(current_version,
+                                                                                                    latest_version),
+                             no_titlebar=True, keep_on_top=True) == 'Yes':
+                wget.download('https://sourceforge.net/projects/coderandom/files/latest/download',
+                              os.getcwd() + "/CodeRandomInstaller.exe")
+
+                version_file = open(dir_path + "/version.txt", "w")
+                version_file.write(str(latest_version))
+                version_file.close()
+
+                os.startfile(os.getcwd() + '/CodeRandomInstaller.exe')
+                run_game = False
+
+    except FileNotFoundError:
+
+        version_file = open(dir_path + "/version.txt", "w")
+        version_file.write(str(latest_version))
+        version_file.close()
+
+
+# Levels
+
+http = urllib3.PoolManager()
+levels = http.request('GET', 'https://coderandom.w3spaces.com/levels.txt')
+levels = levels.data
+levels = eval(levels)
 
 # Game Settings
-while True:
+while run_game:
     sg.theme('GrayGrayGray')
+
+    SETTINGS = read_file('settings.txt', dir_path)
 
     song = dir_path + "/mp3/bg/" + r.choice(os.listdir(dir_path + "/mp3/bg"))
     print(song)
@@ -98,17 +151,16 @@ while True:
         layout_left = [
             [sg.Text('Level')],
             [sg.Text('Theme')],
-            [sg.Text('Lives')],
             [sg.Text('Time Trial')]
         ]
 
         # Right side of the settings window
+        # noinspection PyTypeChecker
         layout_right = [
             [sg.Spin(get_keys(levels), initial_value=SETTINGS['difficulty'], k='difficulty', s=(21, 1))],
             [sg.InputCombo(
                 ['CodeyGreen', 'Black', 'Dark', 'DarkBlue16', 'DarkGrey', 'DarkGreen5', 'DarkGrey12', 'LightBlue6',
                  'Purple', 'Python', 'Reddit'], k='custom_theme', default_value=SETTINGS['custom_theme'])],
-            [sg.Checkbox('', default=False, k='do_lives', disabled=True)],
             [sg.Checkbox('', default=True, k='stopwatch_active')]
         ]
 
@@ -116,6 +168,7 @@ while True:
         settings_layout = [[sg.Text('Settings', justification='center')],
                            [sg.Column(layout_left, background_color=None),
                             sg.Column(layout_right, background_color=None, element_justification='right')],
+                           [sg.Text('CodeRandom.w3spaces.com is a valuable \nresource that is all about this game!')],
                            [sg.Button('Play', k='start_game_from_settings'), sg.Button('Custom Game', k='custom')]
                            ]
 
@@ -130,8 +183,8 @@ while True:
             [sg.Text('Game Settings')],
             [sg.InputCombo(
                 ['CodeyGreen', 'Black', 'Dark', 'DarkBlue16', 'DarkGrey', 'DarkGreen5', 'DarkGrey12', 'LightBlue6',
-                 'Purple', 'Python', 'Reddit'], k='custom_theme', default_value=SETTINGS['last_theme'])],
-            [sg.Spin([1, 2, 3, 4], k='steps'), sg.Text('Step Count')],
+                 'Purple', 'Python', 'Reddit'], k='custom_theme', default_value=SETTINGS['custom_theme'])],
+            [sg.Spin([1, 2, 3, 4, 5, 6, 7, 8], k='steps'), sg.Text('Step Count')],
             [sg.Checkbox('Stopwatch', default=True, k='stopwatch_active')],
             [sg.Text('Game Ciphers')],
             [sg.Checkbox('Shift', k='shift')],
@@ -171,7 +224,7 @@ while True:
 
         # noinspection PyUnboundLocalVariable
         sg.theme(values2['custom_theme'])
-        save_settings(values2)
+        save_settings(values)
     else:
         sg.theme(values['custom_theme'])
         save_settings(values)
@@ -190,9 +243,8 @@ while True:
         if values2['pig']:
             new_steps.append('pig')
         print(new_steps)
-        puzzle_steps = []
-        for i in range(values2['steps']):
-            puzzle_steps.append(r.choice(new_steps))
+        puzzle_steps = new_steps
+        r.shuffle(puzzle_steps)
 
     if 'tap' not in puzzle_steps:
         master_puzzle = r.choice(load_words.load_words(r.randint(4, 7)))
@@ -218,7 +270,8 @@ while True:
     for letter in master_puzzle:
         if 'pig' in puzzle_steps:
             master_puzzle_encrypted.append(
-                sg.Image(source=dir_path + '/img/' + values['custom_theme'] + '/pig_' + ciphers.encrypt(puzzle_steps, letter)[0] + '.png'))
+                sg.Image(source=dir_path + '/img/' + values['custom_theme'] + '/pig_' +
+                                ciphers.encrypt(puzzle_steps, letter)[0] + '.png'))
         elif 'tap' in puzzle_steps:
             master_puzzle_encrypted.append(sg.Text(ciphers.encrypt(puzzle_steps, letter)[0]))
         else:
@@ -257,8 +310,7 @@ while True:
 
     n = open(dir_path + '\\notes.txt', 'r')  # Read Stored Notes
 
-    notes_layout = [[sg.Frame('', [[sg.Text("Notes")],
-                                   [sg.Multiline(n.read(), size=(30, 24))]], size=(640, 600))]
+    notes_layout = [[sg.Frame('', [[sg.Multiline(n.read(), size=(37, 27))]], size=(580, 690))]
 
                     ]
 
@@ -278,8 +330,12 @@ while True:
                                                                   hint_order[current_hint][0][1] + ' -> ' +
                                                                   hint_order[current_hint][1][1] + '\n' +
                                                                   hint_order[current_hint][0][2] + ' -> ' +
-                                                                  hint_order[current_hint][1][2])]],
-                                             element_justification='center', size=(120, 150)))
+                                                                  hint_order[current_hint][1][2],
+                                                                  background_color='#787878',
+                                                                  text_color=r.choice(
+                                                                      ['#ff0000', '#00ff00', '#0000ff', '#000000']))]],
+                                             element_justification='center',
+                                             size=(100, 150), background_color='#787878'))
             current_hint += 1
 
     hint_p_layout = [
@@ -290,28 +346,33 @@ while True:
     # noinspection PyTypeChecker
     hint_m_layout = [
         master_puzzle_encrypted,
-        [sg.Image(dir_path + '/img/heart.png', background_color=None),
-         sg.Image(dir_path + '/img/heart.png', background_color=None),
-         sg.Image(dir_path + '/img/heart.png', background_color=None)],
         [sg.Input('', k='input_master', s=(15, 1)), sg.Button('Test', k='test_master')]
     ]
 
     # Main Window
 
-    puzzle_layout = [[sg.Frame('', hint_m_layout, size=(620, 350))],
-                     [sg.Frame('', hint_p_layout, size=(620, 350))]]
+    puzzle_layout = [[sg.Frame('', hint_m_layout, size=(610, 350))],
+                     [sg.Frame('', hint_p_layout, size=(610, 350))]]
 
     toolbar = [sg.Text('CodeRandom'), sg.Button('Help'), sg.Button('Report Bugs'), sg.Button('Quit')]
 
     layout = [
         toolbar,
-        [sg.Frame('', [[sg.Column(puzzle_layout, size=(620, 700))]]),
-         sg.Frame('', [[sg.Column(notes_layout, size=(640, 700))]])]
+        [sg.Frame('', [[sg.Column(puzzle_layout, size=(620, 720))]]),
+         sg.Frame('Notes', [[sg.Column(notes_layout, size=(640, 710))]])]
+    ]
+
+    bug_layout = [
+        [sg.Text('Email Form')],
+        [sg.DropDown(['Bug', 'Issue', 'Suggestion'], default_value='Bug', k='type'), sg.Text('Email: '),
+         sg.Input('', k='user_email')],
+        [sg.Multiline('', k='msg', s=(75, 20))],
+        [sg.Button('Submit', k='go')]
     ]
 
     # time.sleep(7)
 
-    wn = sg.Window('CodeRandom', layout, finalize=True, no_titlebar=True, font='Verdana 16 bold', size=(1280, 720))
+    wn = sg.Window('CodeRandom', layout, finalize=True, font='Verdana 16 bold', size=(1280, 800))
 
     print(sg.theme())
 
@@ -326,10 +387,22 @@ while True:
             break
         if event == 'Help':
             webbrowser.open_new_tab("https://coderandom.w3spaces.com/")
-        if event == 'Form':
-            webbrowser.open_new_tab('https://forms.gle/sMgiRuVWcKewB8wa7')
+            continue
         if event == 'Report Bugs':
-            webbrowser.open_new_tab('https://github.com/summersphinx/CodeRandom/issues')
+
+            sg.theme('Topanga')
+
+            support = sg.Window('CodeRandom - Report', bug_layout, finalize=True, font='Verdana 16 bold',
+                                size=(1280, 720), no_titlebar=True, force_toplevel=True)
+            e, v = support.read()
+
+            body = 'Email: {}\n\nProblem: \n\n{}'.format(v['user_email'], v['msg'])
+
+            send_an_email(v['type'], body)
+
+            support.close()
+
+            continue
         if event in 'test_master':
             if values['input_master'].lower() == master_puzzle:
                 if timing:

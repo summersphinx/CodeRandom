@@ -3,7 +3,11 @@ from string import ascii_lowercase
 
 
 def shift(key, string):
-    return Caesar(key).encipher(string).lower()
+    if type(string) == list:
+        word = Caesar(key).encipher(string[0]).lower()
+    else:
+        word = Caesar(key).encipher(string).lower()
+    return word
 
 
 def flip(word):
