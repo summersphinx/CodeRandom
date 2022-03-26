@@ -1,1 +1,1 @@
-{'difficulty': 'Tapping the System', 'custom_theme': 'Python', 'stopwatch_active': True}
+{0: None, 'difficulty': 'Introduction', 'custom_theme': 'CodeyGreen', 'stopwatch_active': True, 'volume': 0.6, 'mute': True}

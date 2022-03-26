@@ -1,4 +1,5 @@
 from pycipher import Caesar
+from pycipher import Autokey
 from string import ascii_lowercase
 
 
@@ -10,20 +11,23 @@ def shift(key, string):
     return word
 
 
-def flip(word):
-    string = list(ascii_lowercase)
-    string.reverse()
-    new_word = ''
-    for each in word:
-        new_word += string[ascii_lowercase.index(each)]
-    string = ''.join(string)
-    return new_word
+def flip(word, key):
+    stuff = Caesar(key).encipher(ascii_lowercase).lower()
+    stuff = list(stuff)
+    stuff.reverse()
+    stuff = ''.join(stuff)
+    string = ''
+    stuff = list(stuff)
+
+    for letter in word:
+        string += ascii_lowercase[stuff.index(letter)]
+    return string
 
 
-def string_from_list(l):
+def string_from_list(list_to_be):
     word = ''
 
-    for char in l:
+    for char in list_to_be:
         word += char
     return word
 
@@ -63,6 +67,53 @@ def tap(word):
     return new_word
 
 
+def base5(word):
+    key = {
+        'a': '00',
+        'b': '01',
+        'c': '02',
+        'd': '03',
+        'e': '04',
+        'f': '05',
+        'g': '10',
+        'h': '11',
+        'i': '12',
+        'j': '13',
+        'k': '14',
+        'l': '15',
+        'm': '20',
+        'n': '21',
+        'o': '22',
+        'p': '23',
+        'q': '24',
+        'r': '25',
+        's': '30',
+        't': '31',
+        'u': '32',
+        'v': '33',
+        'w': '34',
+        'x': '35',
+        'y': '40',
+        'z': '41'
+    }
+    new_word = []
+    for each in word:
+        new_word.append(key[each])
+    return new_word
+
+
+def autokey(key, word):
+    print(word)
+    if type(word) == list:
+        word = Autokey(key.upper()).encipher(word[0]).lower()
+    else:
+        word = Autokey(key.upper()).encipher(word).lower()
+
+    print(word)
+
+    return word
+
+
 def encipher(string, word):
     char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
             'v', 'w', 'x', 'y', 'z']
@@ -80,14 +131,14 @@ def encrypt(steps, word):
         if type(step) == list:
             if step[0] == 'shift':
                 word = shift(step[1], word)
-                print('d:')
-                print(word)
+            elif step[0] == 'flip':
+                word = flip(word, step[1])
+            elif step[0] == 'autokey':
+                word = autokey(step[1], word)
         else:
-            if step == 'flip':
-                word = flip(word)
-            elif step == 'tap':
+            if step == 'tap':
                 word = tap(word)
-
-        word = list(word)
+            elif step == 'base':
+                word = base5(word)
 
     return word

@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f0172294-447e-4a65-9791-049bf65c14b8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/CodeRandom helper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CodeRandom.exe" beforeDir="false" afterPath="$PROJECT_DIR$/CodeRandom.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CodeRandom.exe" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/CodeRandom.py" beforeDir="false" afterPath="$PROJECT_DIR$/CodeRandom.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/img/colours.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/mp3/bg/Loadinga.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/mp3/test.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/notes.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/game/settings.txt" beforeDir="false" afterPath="$PROJECT_DIR$/game/settings.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/version.txt" beforeDir="false" afterPath="$PROJECT_DIR$/game/version.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mods/ciphers.py" beforeDir="false" afterPath="$PROJECT_DIR$/mods/ciphers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,7 +46,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/CodeRandom helper.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="aDefault" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
@@ -55,6 +59,9 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\summe\Documents\GitHub\CodeRandom" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\summe\Documents\GitHub\CodeRandom" />
     </key>
   </component>
@@ -162,11 +169,11 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.CodeRandom" />
       <item itemvalue="Python.CodeRandom helper" />
+      <item itemvalue="Python.CodeRandom" />
       <item itemvalue="Python.ciphers" />
-      <item itemvalue="Python.keys" />
       <item itemvalue="Python.colours" />
+      <item itemvalue="Python.keys" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
